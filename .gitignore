@@ -4,3 +4,6 @@
 
 # Models
 models/*.pkl
+
+# Python files
+*.pyc
