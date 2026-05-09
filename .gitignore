@@ -1,2 +1,3 @@
+# Virtual environment, keys and secrets
 .venv/
-
+.env
