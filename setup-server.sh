@@ -23,5 +23,5 @@ if [ -f deploy/pixelwise.service ] && command -v systemctl > /dev/null 2>&1 && i
 	sudo systemctl daemon-reload
 	sudo systemctl enable pixelwise
 	sudo systemctl start pixelwise
-	sudo systemctl status pixelwise
+	sudo systemctl status pixelwise --no-pager
 fi
