@@ -1,12 +1,14 @@
 #!/bin/bash
+
 set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 sudo apt update
 sudo apt install -y git python3 python3-pip python3-venv curl postgresql
 
+
 # Activate venv and install pinned dependencies
-if [ -d "$SCRIPT_DIR/.venv" ] && \
-   [ -f "$SCRIPT_DIR/requirements.txt" ]; then
+if [ -d "$SCRIPT_DIR/.venv" ] && [ -f "$SCRIPT_DIR/requirements.txt" ]; then
     source "$SCRIPT_DIR/.venv/bin/activate"
     pip install -r "$SCRIPT_DIR/requirements.txt"
 fi
@@ -50,9 +52,6 @@ if command -v psql >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.env" ]; then
 fi
 
 # Initialise the predictions table on every VM via Alchemy
-if [ -f "$SCRIPT_DIR/init_db.py" ] && \
-[ -d "$SCRIPT_DIR/.venv" ]; then
-(cd "$SCRIPT_DIR" && \
-source .venv/bin/activate && \
-python init_db.py)
+if [ -f "$SCRIPT_DIR/init_db.py" ] && [ -d "$SCRIPT_DIR/.venv" ]; then
+	(cd "$SCRIPT_DIR" && source .venv/bin/activate && python init_db.py)
 fi
