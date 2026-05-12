@@ -40,3 +40,11 @@ if command -v psql >/dev/null 2>&1 && [ -f "$SCRIPT_DIR/.env" ]; then
         | grep -q 1 || \
     sudo -u postgres createdb -O pixelwise pixelwise
 fi
+
+# Initialise the predictions table on every VM via Alchemy
+if [ -f "$SCRIPT_DIR/init_db.py" ] && \
+[ -d "$SCRIPT_DIR/.venv" ]; then
+(cd "$SCRIPT_DIR" && \
+source .venv/bin/activate && \
+python init_db.py)
+fi
