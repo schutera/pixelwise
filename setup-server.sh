@@ -4,6 +4,14 @@ set -euo pipefail
 sudo apt update
 sudo apt install -y git python3 python3-pip python3-venv curl postgresql
 
+# Activate venv and install pinned dependencies
+if [ -d "$SCRIPT_DIR/.venv" ] && \
+   [ -f "$SCRIPT_DIR/requirements.txt" ]; then
+    source "$SCRIPT_DIR/.venv/bin/activate"
+    pip install -r "$SCRIPT_DIR/requirements.txt"
+fi
+
+
 # Pull the model
 if [ -f .env ]; then
 	set -a; source .env; set +a
