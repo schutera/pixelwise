@@ -6,6 +6,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 sudo apt update
 sudo apt install -y git python3 python3-pip python3-venv curl postgresql nginx
 
+# Create venv if it doesn't exist yet
+if [ ! -d "$SCRIPT_DIR/.venv" ]; then
+    python3 -m venv "$SCRIPT_DIR/.venv"
+fi
 
 # Activate venv and install pinned dependencies
 if [ -d "$SCRIPT_DIR/.venv" ] && [ -f "$SCRIPT_DIR/requirements.txt" ]; then
@@ -15,7 +19,7 @@ fi
 
 
 # Pull the model
-if [ -f .env ]; then
+if [ -f "$SCRIPT_DIR/.env" ]; then
 	set -a; source .env; set +a
 	if [ -n "${MODEL_REPO:-}" ] &&  [ -n "${MODEL_VERSION:-}" ]; then
 		mkdir -p models/
@@ -25,15 +29,6 @@ if [ -f .env ]; then
 		cp /tmp/pixelwise-model/MODELCARD.md models/
 		rm -rf /tmp/pixelwise-model
 	fi
-fi
-
-# Install systemd unit
-if [ -f deploy/pixelwise.service ] && command -v systemctl > /dev/null 2>&1 && id produser > /dev/null 2>&1; then
-	sudo cp deploy/pixelwise.service /etc/systemd/system/pixelwise.service
-	sudo systemctl daemon-reload
-	sudo systemctl enable pixelwise
-	sudo systemctl start pixelwise
-	sudo systemctl status pixelwise --no-pager
 fi
 
 # Provision the postgresql database
@@ -54,6 +49,15 @@ fi
 # Initialise the predictions table on every VM via Alchemy
 if [ -f "$SCRIPT_DIR/init_db.py" ] && [ -d "$SCRIPT_DIR/.venv" ]; then
 	(cd "$SCRIPT_DIR" && source .venv/bin/activate && python init_db.py)
+fi
+
+# Install systemd unit
+if [ -f deploy/pixelwise.service ] && command -v systemctl > /dev/null 2>&1 && id produser > /dev/null 2>&1; then
+	sudo cp deploy/pixelwise.service /etc/systemd/system/pixelwise.service
+	sudo systemctl daemon-reload
+	sudo systemctl enable pixelwise
+	sudo systemctl start pixelwise
+	sudo systemctl status pixelwise --no-pager
 fi
 
 # Install Nginx site and deploy the frontend on prod
