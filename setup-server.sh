@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 sudo apt update
 sudo apt install -y git python3 python3-pip python3-venv curl postgresql nginx
 
-# Create venv if it doesnt exist yet
+# Create venv if it doesn't exist yet
 if [ ! -d "$SCRIPT_DIR/.venv" ]; then
     python3 -m venv "$SCRIPT_DIR/.venv"
 fi
